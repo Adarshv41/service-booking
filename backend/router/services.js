@@ -11,13 +11,13 @@ router.get('/',(req,res)=>{
 
 //add a new service
 router.post('/',(req,res)=>{
-    const servicename=req.body.servicename;
+    const servicetype=req.body.servicetype;
     const price=Number(req.body.price);
-    const time=Date.parse(req.body.time);
+    const time=Number(req.body.time);
 
 
     const newServices=new Services({
-        servicename,price,time,
+        servicetype,price,time,
     });
 
     newServices.save()
@@ -36,9 +36,9 @@ router.delete('/:id',(req,res)=>{
 router.post('/:id',(req,res)=>{
     Services.findById(req.params.id)
     .then(services =>{
-        services.servicename=req.params.servicename;
+        services.servicetype=req.params.servicetype;
         services.price=Number(req.params.price);
-        services.time=Date(req.params.time);
+        services.time=Number(req.params.time);
 
         services.save()
         .then(()=>res.json('Service updated...'))

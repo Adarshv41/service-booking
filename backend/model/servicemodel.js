@@ -1,9 +1,9 @@
 const mongoose=require('mongoose');
 
 const serviceSchema=new mongoose.Schema({
-    servicename:{type:String,required:true},
+    servicetype:{type:String,required:true},
     price:{type:Number,required:true},
-    time:{type:Date,required:true},
+    time:{type:Number,required:true},
 })
 
 const Services = mongoose.model('services',serviceSchema);

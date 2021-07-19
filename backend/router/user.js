@@ -6,10 +6,10 @@ const jwt=require('jsonwebtoken');
 //registration
 router.post('/',async (req,res)=>{
     try{
-        const{name,email,password,passwordVerify}=req.body;
+        const{name,email,password}=req.body;  //passwordVerify
 
         //validatiion
-        if(!name || !email || !password || !passwordVerify)
+        if(!name || !email || !password ) //||!passwordVerify
         return res.status(400).json({errorMessage:'Please enter all the field'});
 
         if(name.lenth < 3)
@@ -18,13 +18,13 @@ router.post('/',async (req,res)=>{
         if(password.length < 6)
         return res.status(400).json({errorMessage:'Please enter a password of atleast 6 character'});
 
-        if(password !== passwordVerify)
-        return res.status(400).json({errorMessage:'Please enter same password as above'});
+        // if(password !== passwordVerify)
+        // return res.status(400).json({errorMessage:'Please enter same password as above'});
 
         //problem with the existinguser
-        const existingUser= await User.findOne({email:email}) 
-        if(existingUser)
-        return res.status(400).json({errorMessage:'User exisit'});
+        // const existingUser= await User.findOne({email:email}) 
+        // if(existingUser)
+        // return res.status(400).json({errorMessage:'User exisit'});
    
         //pasword hash
         const salt= await bcrypt.genSalt();
@@ -32,7 +32,7 @@ router.post('/',async (req,res)=>{
 
         //save user to db
         const newUser=new User({
-            email,passwordHash
+            name,email,passwordHash
         });
         const savedUser=await newUser.save()
         .then(()=>res.json('User added...'))
@@ -44,9 +44,9 @@ router.post('/',async (req,res)=>{
     },process.env.JWT_SECRET);
 
     //send the token in the HTTP-cookies
-    res.cookie('token',token,{
-        httpOnly:true,
-    });
+    // res.cookie('token',token,{
+    //     httpOnly:true,
+    // });
     
     
     }catch (err){
@@ -120,16 +120,16 @@ router.delete('/:id',(req,res)=>{
 })
 
 //update a user
-router.put('/:id',(req,res)=>{
-    User.findById(req.params.id)
+router.post('/:id',(req,res)=>{
+    User.findByIdAndUpdate(req.params.id)
     .then(user =>{
-        user.name=req.params.name;
-        user.email=req.params.email;
-        user.password=req.params.password;
+        user.name=req.body.name;
+        user.email=req.body.email;
+        user.passwordHash=req.body.passwordHash;
         
         user.save()
-        .then(res=>res.json('User updated...'))
-        .catch(err=>res.status(400).json('Error: ',err));
+        .then(()=>res.json('User updated...'))
+        //.catch(err=>res.status(400).json('Error: ',err));
 
     })
     .catch(err=>res.status(400).json('Error: ',err))
